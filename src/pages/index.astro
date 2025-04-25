@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+import CyberScene from '../components/react/CyberScene';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+const posts = await getCollection('blog');
+posts.sort((a: CollectionEntry<'blog'>, b: CollectionEntry<'blog'>) => 
+  b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Layout title="Cyberpunk Blog">
+  <main class="relative min-h-screen">
+    <div class="fixed inset-0 z-0">
+      <CyberScene client:load />
+    </div>
+    
+    <div class="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <div class="text-center mb-20">
+        <h1 class="text-5xl md:text-7xl font-cyber bg-gradient-to-r from-neon-pink via-neon-purple to-neon-blue bg-clip-text text-transparent animate-glitch">
+          Cyberpunk Blog
+        </h1>
+        <p class="mt-4 text-neon-cyan text-lg">Exploring the digital frontier</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post: CollectionEntry<'blog'>) => (
+          <article class="relative group">
+            <div class="absolute inset-0 bg-gradient-to-r from-neon-pink to-neon-blue opacity-20 group-hover:opacity-30 transition-opacity rounded-lg"></div>
+            <div class="relative bg-cyber-light p-6 rounded-lg border border-cyber-accent hover:border-neon-cyan transition-colors">
+              <a href={`/blog/${post.slug}`} class="block">
+                {post.data.heroImage && (
+                  <img
+                    src={post.data.heroImage}
+                    alt=""
+                    class="w-full h-48 object-cover rounded-md mb-4"
+                  />
+                )}
+                <h2 class="text-xl font-cyber text-white mb-2 group-hover:text-neon-cyan transition-colors">
+                  {post.data.title}
+                </h2>
+                <p class="text-sm text-gray-400 mb-4">
+                  {new Date(post.data.pubDate).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+                <p class="text-gray-300">
+                  {post.data.description}
+                </p>
+                {post.data.tags && (
+                  <div class="mt-4 flex flex-wrap gap-2">
+                    {post.data.tags.map((tag: string) => (
+                      <span class="px-2 py-1 text-xs rounded-full bg-cyber-accent text-neon-cyan">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </main>
+</Layout>

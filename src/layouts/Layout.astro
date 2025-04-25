@@ -1,0 +1,70 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "A cyberpunk blog with crazy 3D animations" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=jet-brains-mono@1,2&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-cyber-darker text-white font-mono min-h-screen">
+    <div class="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyber-dark via-cyber-darker to-black pointer-events-none"></div>
+    <div class="relative z-10">
+      <slot />
+    </div>
+    <div class="fixed bottom-0 left-0 w-full h-px bg-gradient-to-r from-neon-pink via-neon-blue to-neon-purple"></div>
+    <div class="fixed top-0 left-0 w-px h-full bg-gradient-to-b from-neon-pink via-neon-blue to-neon-purple"></div>
+    <div class="fixed top-0 right-0 w-px h-full bg-gradient-to-b from-neon-pink via-neon-blue to-neon-purple"></div>
+  </body>
+</html>
+
+<style>
+  @font-face {
+    font-family: 'BlenderPro';
+    src: url('/fonts/BlenderPro-Bold.woff2') format('woff2');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.15),
+      rgba(0, 0, 0, 0.15) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    z-index: 20;
+  }
+</style> 

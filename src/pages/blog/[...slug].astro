@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import type { CollectionEntry } from 'astro:content';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+type Props = {
+  post: CollectionEntry<'blog'>;
+};
+
+const { post } = Astro.props;
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+---
+
+<Layout title={post.data.title}>
+  <main class="relative min-h-screen">
+    <div class="relative z-10 pt-20 pb-32 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <article class="prose prose-invert prose-cyan max-w-none">
+        {post.data.heroImage && (
+          <div class="relative w-full h-[40vh] mb-12">
+            <div class="absolute inset-0 bg-gradient-to-r from-neon-pink to-neon-blue opacity-20"></div>
+            <img
+              src={post.data.heroImage}
+              alt=""
+              class="w-full h-full object-cover rounded-lg"
+            />
+          </div>
+        )}
+        
+        <header class="mb-12 text-center">
+          <h1 class="text-4xl md:text-6xl font-cyber bg-gradient-to-r from-neon-pink via-neon-purple to-neon-blue bg-clip-text text-transparent mb-4">
+            {post.data.title}
+          </h1>
+          <div class="flex items-center justify-center gap-4 text-sm text-gray-400">
+            <time datetime={post.data.pubDate.toISOString()}>
+              {new Date(post.data.pubDate).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </time>
+            {post.data.tags && (
+              <div class="flex gap-2">
+                {post.data.tags.map((tag: string) => (
+                  <span class="px-2 py-1 text-xs rounded-full bg-cyber-accent text-neon-cyan">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </header>
+        
+        <div class="relative">
+          <div class="absolute -left-4 top-0 w-px h-full bg-gradient-to-b from-neon-pink via-neon-blue to-neon-purple"></div>
+          <div class="prose-headings:font-cyber prose-headings:text-white prose-p:text-gray-300 prose-a:text-neon-cyan prose-a:no-underline hover:prose-a:text-neon-pink prose-strong:text-neon-yellow prose-code:text-neon-purple">
+            <slot />
+          </div>
+        </div>
+      </article>
+      
+      <div class="mt-16 text-center">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 text-neon-cyan hover:text-neon-pink transition-colors"
+        >
+          <span class="text-lg">←</span>
+          Back to all posts
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  /* Custom scrollbar for code blocks */
+  :global(pre::-webkit-scrollbar) {
+    height: 8px;
+    background-color: #1a1a1a;
+  }
+
+  :global(pre::-webkit-scrollbar-thumb) {
+    background-color: #3a86ff;
+    border-radius: 4px;
+  }
+
+  :global(pre::-webkit-scrollbar-track) {
+    background-color: #1a1a1a;
+  }
+
+  /* Code block styling */
+  :global(pre) {
+    background-color: #0d0d0d !important;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
+  :global(code) {
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style> 
